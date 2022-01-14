@@ -1,7 +1,7 @@
 require("dotenv").config();
 const sgMail = require("@sendgrid/mail");
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-const mailingListEmail = "noreply-artion@fantom.foundation";
+const mailingListEmail = "no-reply@daosquare.io";
 const messageUtils = require("./message.utils");
 
 const app_url = process.env.APP_URL;
@@ -92,7 +92,7 @@ const notifyBundleCreation = async (address, bundleID, bundleName) => {
   }
 };
 
-const nofifyNFTShowUp = async (address, contractAddress, tokenID) => {
+const notifyNFTShowUp = async (address, contractAddress, tokenID) => {
   address = toLowerCase(address);
   contractAddress = toLowerCase(contractAddress);
   tokenID = parseInt(tokenID);
@@ -303,7 +303,7 @@ const notifyBundleUpdate = async (bundleID, bundleName, address, price) => {
   }
 };
 
-const nofityNFTUpdated = async (address, contractAddress, tokenID, price) => {
+const notifyNFTUpdated = async (address, contractAddress, tokenID, price) => {
   try {
       contractAddress = toLowerCase(contractAddress);
       tokenID = parseInt(tokenID);
@@ -537,12 +537,12 @@ const sendEmail = (msg) => {
 
 const notifications = {
   notifyBundleCreation,
-  nofifyNFTShowUp,
+  notifyNFTShowUp,
   notifyAuctionPriceUpdate,
   notifySingleItemListed,
   notifyNewAuction,
   notifyBundleListing,
-  nofityNFTUpdated,
+  notifyNFTUpdated,
   notifyBundleUpdate,
 };
 

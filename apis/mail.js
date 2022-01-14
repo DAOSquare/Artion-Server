@@ -6,15 +6,13 @@ const SendGridTemplates = require("../constants/mail_template_id");
 router.get("/mailTest", async (req, res) => {
   try {
     let msg = {
-      from: "jason.kwon@fantom.foundation",
+      from: "nft@daosquare.io",
       templateId: SendGridTemplates.nftitem,
       personalizations: [
         {
           to: [
-            "fortune.onchain@gmail.com",
-            "jason.k0427@gmail.com",
-            "danxin.ni0119@gmail.com",
-            "mk@fantom.foundation",
+            "effy.yin@gmail.com",
+            "dodo_yin@163.com",
           ],
           dynamic_template_data: {
             title: "Jason Test",

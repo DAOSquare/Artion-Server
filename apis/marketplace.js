@@ -330,7 +330,7 @@ router.post("/itemUpdated", service_auth, async (req, res) => {
 
     try {
       // send notification
-      await notifications.nofityNFTUpdated(owner, nft, tokenId, newPricePerItem, itemPayToken.address);
+      await notifications.notifyNFTUpdated(owner, nft, tokenId, newPricePerItem, itemPayToken.address);
     } catch (err) {
       Logger.error("[ItemUpdated] Failed to notify owner", err.message);
     }
@@ -523,12 +523,12 @@ router.post("/offerCanceled", service_auth, async (req, res) => {
             address: tokenOwner.owner,
           });
           if (owner && ns.sNftOfferCancel) {
-            let isNotifiable = await isOfferCancelNotifiable(
-              owner.address,
-              nft,
-              tokenId
-            );
-            if (!isNotifiable) return;
+            // let isNotifiable = await isOfferCancelNotifiable(
+            //   owner.address,
+            //   nft,
+            //   tokenId
+            // );
+            // if (!isNotifiable) return;
             let alias = await getUserAlias(owner.address);
             let tokenName = await getNFTItemName(nft, tokenId);
             let creatorAlias = await getUserAlias(creator);

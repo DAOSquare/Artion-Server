@@ -10,12 +10,11 @@ const Account = mongoose.model('Account');
 const Bid = mongoose.model('Bid');
 const NFTITEM = mongoose.model('NFTITEM');
 const TradeHistory = mongoose.model('TradeHistory');
-// const NotificationSetting = mongoose.model("NotificationSetting");
+const NotificationSetting = mongoose.model("NotificationSetting");
 
-// const sendEmail = require("../mailer/auctionMailer");
-// const getCollectionName = require("../mailer/utils");
-// const notifications = require("../mailer/followMailer");
-// const { getPrice } = require("../services/price.feed");
+const sendEmail = require("../mailer/auctionMailer");
+const getCollectionName = require("../mailer/utils");
+const notifications = require("../mailer/followMailer");
 const AuctionContractAbi = require('../constants/auctionabi');
 // const CollectionFactoryContract = require("../constants/factory_abi");
 const { PAYTOKENS, DISABLED_PAYTOKENS } = require('../constants/tokens');
@@ -34,18 +33,18 @@ const auctionSC = new ethers.Contract(
   ownerWallet
 );
 
-// const get721ItemName = async (nft, tokenID) => {
-//   try {
-//     let token = await NFTITEM.findOne({
-//       contractAddress: toLowerCase(nft),
-//       tokenID: tokenID,
-//     });
-//     if (token) return token.name;
-//     else return tokenID;
-//   } catch (error) {
-//     return tokenID;
-//   }
-// };
+const get721ItemName = async (nft, tokenID) => {
+  try {
+    let token = await NFTITEM.findOne({
+      contractAddress: toLowerCase(nft),
+      tokenID: tokenID,
+    });
+    if (token) return token.name;
+    else return tokenID;
+  } catch (error) {
+    return tokenID;
+  }
+};
 //
 // const getUserAlias = async (walletAddress) => {
 //   try {
@@ -135,9 +134,8 @@ router.post('/auctionCreated', service_auth, async (req, res) => {
       );
     }
 
-    // TODO: notifying users is disabled
     // notify followers
-    // notifications.notifyNewAuction(nftAddress, tokenID);
+    notifications.notifyNewAuction(nftAddress, tokenId);
 
     Logger.info('[AuctionCreated] Success: ', {
       transactionHash,
@@ -194,35 +192,37 @@ router.post('/auctionCancelled', service_auth, async (req, res) => {
       }
     }
 
-    // TODO enable notifications
-    // const bid = await Bid.findOne({
-    //   minter: nftAddress,
-    //   tokenID: tokenID,
-    // });
-    // if (bid) {
-    //   let bidder = bid.bidder;
-    //   let account = await Account.findOne({ address: bidder });
-    //   // check if user listens
-    //   let ns = await NotificationSetting.findOne({ address: bidder });
-    //   if (account && ns.sAuctionOfBidCancel) {
-    //     let to = account.email;
-    //     let alias = account.alias;
-    //     let collectionName = await getCollectionName(nftAddress);
-    //     let tokenName = await get721ItemName(nftAddress, tokenID);
-    //     let data = {
-    //       type: "auction",
-    //       to: to,
-    //       event: "AuctionCancelled",
-    //       subject: "Auction cancelled!",
-    //       alias: alias,
-    //       collectionName: collectionName,
-    //       tokenName: tokenName,
-    //       tokenID: tokenID,
-    //       nftAddress: nftAddress,
-    //     };
-    //     sendEmail(data);
-    //   }
-    // }
+    // notify bid user
+    const bid = await Bid.findOne({
+      minter: nftAddress,
+      tokenID: tokenId,
+    });
+
+    if (bid) {
+      let bidder = bid.bidder;
+      let account = await Account.findOne({ address: bidder });
+      // check if user listens
+      let ns = await NotificationSetting.findOne({ address: bidder });
+      if (account && ns.sAuctionOfBidCancel) {
+        let to = account.email;
+        let alias = account.alias;
+        let collectionName = await getCollectionName(nftAddress);
+        let tokenName = await get721ItemName(nftAddress, tokenId);
+        let data = {
+          type: "auction",
+          to: to,
+          event: "AuctionCancelled",
+          subject: "Auction cancelled!",
+          alias: alias,
+          collectionName: collectionName,
+          tokenName: tokenName,
+          tokenID: tokenId,
+          nftAddress: nftAddress,
+        };
+        console.log(9999,JSON.stringify(data))
+        sendEmail(data);
+      }
+    }
 
     Logger.info('[AuctionCancelled] Success: ', {
       transactionHash,
@@ -359,6 +359,9 @@ router.post('/updateAuctionReservePrice', service_auth, async (req, res) => {
       updateToken.price = reservePrice;
       await updateToken.save();
     }
+
+    // notify follower
+    notifications.notifyAuctionPriceUpdate(nftAddress, tokenId, reservePrice);
 
     Logger.info('[UpdateAuctionReservePrice] Success: ', {
       transactionHash,

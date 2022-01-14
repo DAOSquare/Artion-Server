@@ -1,12 +1,10 @@
 require("dotenv").config();
 const FantomContacts = {
-  discord: "http://chat.fantom.network/",
-  twitter: "https://twitter.com/FantomFDN",
-  telegram: "https://t.me/fantomfoundation",
-  reddit: "https://reddit.com/r/FantomFoundation",
-  artionUnsubscribe: `https://${
-    process.env.RUNTIME ? "testnet." : ""
-  }artion.io/settings/notification`,
+  discord: "https://discord.com/invite/daosquare",
+  twitter: "https://twitter.com/DAOSquare",
+  telegram: "https://t.me/DAOSquareOfficial",
+  reddit: "https://www.reddit.com/r/DAOSquare/",
+  artionUnsubscribe: "https://www.daosquare.io/",
   email: "nft@daosquare.io",
 };
 

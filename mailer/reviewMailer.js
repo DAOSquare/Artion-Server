@@ -3,15 +3,15 @@ const sgMail = require("@sendgrid/mail");
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const foundationEmail = "nft@daosquare.io";
 
-const adminEmails = ["artion@fantom.foundation"];
+const adminEmails = ["nft@daosquare.io"];
 
 const createDenyMessage = (data) => {
   return {
     to: data.to,
     from: foundationEmail,
     subject: data.subject,
-    text: "artion notification",
-    html: `Your collection has been denied to register on Artion. <br/><br/> reason : ${data.reason} </br></br> Thank You.  <br/><br/>`,
+    text: "NFT4ever notification",
+    html: `Your collection has been denied to register on NFT4ever. <br/><br/> reason : ${data.reason} </br></br> Thank You.  <br/><br/>`,
   };
 };
 
@@ -20,8 +20,8 @@ const createApproveMessage = (data) => {
     to: data.to,
     from: foundationEmail,
     subject: data.subject,
-    text: "artion notification",
-    html: "Dear Artion User! <br/> Your collection has been successfully registered in Artion. ",
+    text: "NFT4ever notification",
+    html: "Dear NFT4ever User, <br/> Your collection has been successfully registered in NFT4ever. ",
   };
 };
 
@@ -52,7 +52,7 @@ const notifyAdminForNewCollectionApplication = () => {
     to: adminEmails,
     from: foundationEmail,
     subject: "New Application",
-    text: "artion notification",
+    text: "NFT4ever notification",
     html: "New collection has been submitted for your review.",
   };
   sgMail.sendMultiple(message).then(
@@ -69,7 +69,7 @@ const notifyInternalCollectionDeployment = (address, email) => {
     to: email,
     from: foundationEmail,
     subject: "Collection Created",
-    text: "artion notification",
+    text: "NFT4ever notification",
     html: `New collection has been deployed with address ${address}`,
   };
   sgMail.send(message).then(
