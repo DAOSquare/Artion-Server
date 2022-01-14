@@ -107,7 +107,7 @@ router.post('/collectiondetails', auth, async (req, res) => {
   // verify if 1155 smart contracts
   let is1155 = await isValidERC1155(erc721Address);
 
-  let isInternal = await FactoryUtils.isInternalCollection(
+  let isInternal = await FactoryUtils.isInternalCollection( // todo
     erc721Address,
     !is1155
   );
@@ -188,10 +188,10 @@ router.post('/collectiondetails', auth, async (req, res) => {
         category.type = 721;
         await category.save();
       } else {
-        return res.json({
-          status: 'failed',
-          data: 'Category minter address already exists!'
-        });
+        // return res.json({
+        //   status: 'failed',
+        //   data: 'Category minter address already exists!'
+        // });
       }
     }
     // add a new collection
@@ -223,13 +223,13 @@ router.post('/collectiondetails', auth, async (req, res) => {
     let newCollection = await _collection.save();
     if (newCollection) {
       // notify admin about a new app
-      if (!isInternal[0]) {
+      // if (!isInternal[0]) {
         applicationMailer.notifyAdminForNewCollectionApplication(); //notify admin
         applicationMailer.notifyInternalCollectionDeployment(
           erc721Address,
           email
         ); // notify register
-      }
+      // }
       return res.send({
         status: 'success',
         data: newCollection.toJson()
@@ -245,13 +245,13 @@ router.post('/getMintableCollections', auth, async (req, res) => {
   try {
     let address = extractAddress(req, res);
     let internalCollections = await Collection.find({
-      isInternal: true,
+      // isInternal: true,
       isOwnerble: false,
       isAppropriate: true
     });
     let myCollections = await Collection.find({
       owner: address,
-      isInternal: true,
+      // isInternal: true,
       isOwnerble: true,
       isAppropriate: true
     });
@@ -351,7 +351,8 @@ router.post('/reviewApplication', admin_auth, async (req, res) => {
           reason: `${reason}`
         });
         return res.json({
-          status: 'success'
+          status: 'failed',
+          message: reason
         });
       }
       // validate royalty to range in o to 100
@@ -370,6 +371,7 @@ router.post('/reviewApplication', admin_auth, async (req, res) => {
         });
       }
 
+      // if(royalty!==0)
       try {
         // now update the collection fee
         await marketplaceSC.registerCollectionRoyalty(
