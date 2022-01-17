@@ -245,17 +245,25 @@ router.post('/getMintableCollections', auth, async (req, res) => {
   try {
     let address = extractAddress(req, res);
     let internalCollections = await Collection.find({
-      // isInternal: true,
+      isInternal: true,
       isOwnerble: false,
       isAppropriate: true
     });
     let myCollections = await Collection.find({
       owner: address,
-      // isInternal: true,
+      isInternal: true,
       isOwnerble: true,
       isAppropriate: true
     });
-    let collections = [...internalCollections, ...myCollections];
+    let myExternalCollections = await Collection.find({
+      owner: address,
+      isInternal: false ,
+      isOwnerble: true,
+      isAppropriate: true
+    });
+    let index = internalCollections.findIndex(item => item.erc721Address === process.env.DEFAULT_COLLECTION_ADDRESS)
+    let defaultCollection = internalCollections.splice(index, 1);
+    let collections = [...defaultCollection, ...myCollections, ...myExternalCollections, ...internalCollections];
     let tokenTypeMap = new Map();
     let promise = collections.map(async (collection) => {
       let category = await Category.findOne({
@@ -331,7 +339,7 @@ router.post('/reviewApplication', admin_auth, async (req, res) => {
         reason: `${reason}`
       });
       return res.json({
-        status: 'success'
+        status: 'success',
       });
     } else if (status == 1) {
       // update smart contract for royalty
@@ -340,56 +348,57 @@ router.post('/reviewApplication', admin_auth, async (req, res) => {
       let creator = collection.owner;
 
       // validate fee receipient to be a valid erc20 address
-      if (!ethers.utils.isAddress(feeRecipient)) {
-        // deny -- remove from collection and send email
-        let reason = 'Fee recipient Address Invalid.';
-        await collection.remove();
-        // send deny email
-        applicationMailer.sendApplicationDenyEmail({
-          to: email,
-          subject: 'Collection Registration Failed!',
-          reason: `${reason}`
-        });
-        return res.json({
-          status: 'failed',
-          message: reason
-        });
-      }
+      // if (!ethers.utils.isAddress(feeRecipient)) {
+      //   // deny -- remove from collection and send email
+      //   let reason = 'Fee recipient Address Invalid.';
+      //   await collection.remove();
+      //   // send deny email
+      //   applicationMailer.sendApplicationDenyEmail({
+      //     to: email,
+      //     subject: 'Collection Registration Failed!',
+      //     reason: `${reason}`
+      //   });
+      //   return res.json({
+      //     status: 'success',
+      //     message: reason
+      //   });
+      // }
       // validate royalty to range in o to 100
-      if (royalty > 10000 || royalty < 0) {
-        // deny -- remove from collection and send email
-        let reason = 'Royalty should be in range of 0 to 100';
-        await collection.remove();
-        // send deny email
-        applicationMailer.sendApplicationDenyEmail({
-          to: email,
-          subject: 'Collection Registration Failed!',
-          reason: `${reason}`
-        });
-        return res.json({
-          status: 'success'
-        });
-      }
+      // if (royalty > 10000 || royalty < 0) {
+      //   // deny -- remove from collection and send email
+      //   let reason = 'Royalty should be in range of 0 to 100';
+      //   await collection.remove();
+      //   // send deny email
+      //   applicationMailer.sendApplicationDenyEmail({
+      //     to: email,
+      //     subject: 'Collection Registration Failed!',
+      //     reason: `${reason}`
+      //   });
+      //   return res.json({
+      //     status: 'success'
+      //   });
+      // }
 
-      // if(royalty!==0)
-      try {
-        // now update the collection fee
-        await marketplaceSC.registerCollectionRoyalty(
-          contractAddress,
-          creator,
-          royalty,
-          feeRecipient,
-          { gasLimit: 4000000 }
-        );
-      } catch (error) {
-        Logger.debug('error in setting collection royalty');
-        Logger.error(error);
-        return res.json({
-          status: 'failed'
-        });
-      }
-      // approve -- udpate collection and send email
+      // try {
+      //   // now update the collection fee
+      //   await marketplaceSC.registerCollectionRoyalty( // todo
+      //     contractAddress,
+      //     creator,
+      //     royalty,
+      //     feeRecipient,
+      //     { gasLimit: 4000000 }
+      //   );
+      // } catch (error) {
+      //   Logger.debug('error in setting collection royalty');
+      //   Logger.error(error);
+      //   return res.json({
+      //     status: 'failed'
+      //   });
+      // }
+      // approve -- update collection and send email
       collection.status = true;
+      // only the owner of registered collection can mint NFT
+      collection.isOwnerble = true;
       await collection.save();
       // now update isAppropriate
       try {
