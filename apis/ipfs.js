@@ -211,6 +211,7 @@ router.post("/uploadImage2Server", auth, async (req, res) => {
         const ipfsUri = ipfsUris[Math.floor(Math.random() * ipfsUris.length)];
         let imgData = fields.image;
         let name = fields.name;
+        let collection = fields.collection;
         // let address = fields.account;
         // address = toLowerCase(address);
 
@@ -273,7 +274,7 @@ router.post("/uploadImage2Server", auth, async (req, res) => {
                 recipient: address,
                 IP_Rights: xtraUrl,
                 createdAt: currentTime,
-                collection: "Fantom Powered NFT Collection",
+                collection: collection,
               },
             };
 
@@ -460,15 +461,19 @@ router.post("/uploadCollectionImage2Server", auth, async (req, res) => {
       );
       let imageFileName = address + name.replace(" ", "") + "." + extension;
       imgData = imgData.replace(`data:image\/${extension};base64,`, "");
-      fs.writeFile(uploadPath + imageFileName, imgData, "base64", (err) => {
-        if (err) {
-          Logger.error(err);
-          return res.status(400).json({
-            status: "failed to save an image file",
-            err,
-          });
-        }
-      });
+      try {
+        fs.writeFile(uploadPath + imageFileName, imgData, "base64", (err) => {
+          if (err) {
+            Logger.error(err);
+            return res.status(400).json({
+              status: "failed to save an image file",
+              err,
+            });
+          }
+        });
+      } catch (error) {
+        console.error('write file failed with error: ', error)
+      }
 
       let filePinStatus = await pinCollectionFileToIPFS(
         imageFileName,
