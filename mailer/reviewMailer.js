@@ -1,5 +1,6 @@
 require("dotenv").config();
 const sgMail = require("@sendgrid/mail");
+const SendGridTemplates = require("../constants/mail_template_id");
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const foundationEmail = "nft@daosquare.io";
 
@@ -68,9 +69,20 @@ const notifyInternalCollectionDeployment = (address, email) => {
   let message = {
     to: email,
     from: foundationEmail,
-    subject: "Collection Created",
-    text: "NFT4ever notification",
-    html: `New collection has been deployed with address ${address}`,
+    // subject: "Collection Created",
+    // text: "NFT4ever notification",
+    // html: `New collection has been deployed with address ${address}`,
+    templateId: SendGridTemplates.collection,
+    personalizations: [
+      {
+        to: email,
+        dynamic_template_data: {
+          title: 'Dear NFT4ever User',
+          content: 'New collection has been deployed with address',
+          address: address
+        },
+      },
+    ],
   };
   sgMail.send(message).then(
     () => {},

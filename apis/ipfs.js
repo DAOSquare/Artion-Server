@@ -106,7 +106,7 @@ const pinBannerFileToIPFS = async (fileName, address) => {
 };
 
 // pin image for collection
-const pinCollectionFileToIPFS = async (fileName, name, address) => {
+const pinCollectionFileToIPFS = async (fileName, name, address) => { // todo
   const options = {
     pinataMetadata: {
       name: name,
@@ -119,14 +119,17 @@ const pinCollectionFileToIPFS = async (fileName, name, address) => {
       cidVersion: 0,
     },
   };
-  const readableStreamForFile = fs.createReadStream(uploadPath + fileName);
 
   try {
+    const readableStreamForFile = fs.createReadStream(uploadPath + fileName);
     let result = await pinata.pinFileToIPFS(readableStreamForFile, options);
     return result;
   } catch (error) {
     Logger.error(error);
-    return "failed to pin file to ipfs";
+    return {
+      IpfsHash:'QmPDkye1QEZsbMwuz145VXm8WRdgrepncJTuj8hWHTpkq1',
+      message: "failed to pin file to ipfs"
+    }
   }
 };
 // pin json to ipfs for NFT
@@ -483,7 +486,9 @@ router.post("/uploadCollectionImage2Server", auth, async (req, res) => {
       // remove file once pinned
       try {
         fs.unlinkSync(uploadPath + imageFileName);
-      } catch (error) {}
+      } catch (error) {
+        console.log(error)
+      }
       return res.json({
         status: "success",
         data: filePinStatus.IpfsHash,
