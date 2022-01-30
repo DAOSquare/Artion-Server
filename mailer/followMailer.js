@@ -75,7 +75,7 @@ const notifyBundleCreation = async (address, bundleID, bundleName) => {
     let to = mailingListEmail;
     let bcc = messageUtils.createEmailList(emails);
     let title = "New Bundle Created!";
-    let content = `Artion User(${owner}) has created ${bundleName} bundle.`;
+    let content = `NFT4ever User(${owner}) has created ${bundleName} bundle.`;
     let link = `${app_url}bundle/${bundleID}`;
 
     let message = messageUtils.createBundleItemMessageList({
@@ -105,7 +105,7 @@ const notifyNFTShowUp = async (address, contractAddress, tokenID) => {
     let to = mailingListEmail;
     let bcc = messageUtils.createEmailList(emails);
     let title = "New NFT Item Created!";
-    let content = `Artion User(${owner}) has created ${nftName} nft item.`;
+    let content = `NFT4ever User(${owner}) has created ${nftName} nft item.`;
     let image = await getNFTThumbnailPath(contractAddress, tokenID);
     image = `${storage_url}${image}`;
     let name = nftName;
@@ -146,7 +146,7 @@ const notifyAuctionPriceUpdate = async (contractAddress, tokenID, price) => {
     let to = mailingListEmail;
     let bcc = messageUtils.createEmailList(emails);
     let title = "Auction Price Updated!";
-    let content = `Artion User(${owner}) has updated an auction price.`;
+    let content = `NFT4ever User(${owner}) has updated an auction price.`;
     let image = await getNFTThumbnailPath(contractAddress, tokenID);
     image = `${storage_url}${image}`;
     let name = nftName;
@@ -187,7 +187,7 @@ const notifySingleItemListed = async (
     let to = mailingListEmail;
     let bcc = messageUtils.createEmailList(emails);
     let title = "New Item Listed!";
-    let content = `Artion User(${owner}) has listed a new NFT(${nftName}).`;
+    let content = `NFT4ever User(${owner}) has listed a new NFT(${nftName}).`;
     let image = await getNFTThumbnailPath(contractAddress, tokenID);
     image = `${storage_url}${image}`;
     let name = nftName;
@@ -227,7 +227,7 @@ const notifyNewAuction = async (contractAddress, tokenID) => {
     let to = mailingListEmail;
     let bcc = messageUtils.createEmailList(emails);
     let title = "New Auction!";
-    let content = `Artion User(${address}) has put an NFT in auction.`;
+    let content = `NFT4ever User(${address}) has put an NFT in auction.`;
     let image = await getNFTThumbnailPath(contractAddress, tokenID);
     image = `${storage_url}${image}`;
     let name = nftName;
@@ -258,7 +258,7 @@ const notifyBundleListing = async (bundleID, bundleName, address, price) => {
     let to = mailingListEmail;
     let bcc = messageUtils.createEmailList(emails);
     let title = "Bundle Listed!";
-    let content = `Artion User(${owner}) has listed ${bundleName} bundle.`;
+    let content = `NFT4ever User(${owner}) has listed ${bundleName} bundle.`;
     let link = `${app_url}bundle/${bundleID}`;
 
     let message = messageUtils.createBundleItemMessageList({
@@ -285,7 +285,7 @@ const notifyBundleUpdate = async (bundleID, bundleName, address, price) => {
     let to = mailingListEmail;
     let bcc = messageUtils.createEmailList(emails);
     let title = "Bundle Price Updated!";
-    let content = `Artion User(${owner}) has updated ${bundleName} bundle's price.`;
+    let content = `NFT4ever User(${owner}) has updated ${bundleName} bundle's price.`;
     let link = `${app_url}bundle/${bundleID}`;
 
     let message = messageUtils.createBundleItemMessageList({
@@ -322,7 +322,7 @@ const notifyNFTUpdated = async (address, contractAddress, tokenID, price) => {
     let to = mailingListEmail;
     let bcc = messageUtils.createEmailList(emails);
     let title = "NFT Price Updated!";
-    let content = `Artion User(${owner}) has updated nft(${nftName})'s price.`;
+    let content = `NFT4ever User(${owner}) has updated nft(${nftName})'s price.`;
     let image = await getNFTThumbnailPath(contractAddress, tokenID);
     image = `${storage_url}${image}`;
     let name = nftName;
